@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Expedición Fracción | Vista Previa Interactiva</title>
+  <title>Expedición Fracción | Laboratorio Virtual Interactivo</title>
   <style>
     /* =========================================================
        EXPEDICIÓN FRACCIÓN - ESTILOS GLOBALES Y TEMA VIDEOJUEGO
+       100% CSS3 puro - Sin dependencias externas
        ========================================================= */
     :root {
       --bg-dark: #071318;
-      --bg-panel: rgba(13, 31, 41, 0.88);
-      --bg-card: rgba(19, 45, 58, 0.94);
+      --bg-panel: rgba(13, 31, 41, 0.9);
+      --bg-card: rgba(19, 45, 58, 0.95);
       --border-glow: rgba(56, 189, 248, 0.35);
       --gold: #fbbf24;
       --gold-dark: #d97706;
@@ -42,6 +43,10 @@
       line-height: 1.5;
     }
 
+    .hidden {
+      display: none !important;
+    }
+
     /* =========================================================
        FONDO ANIMADO DE EXPEDICIÓN
        ========================================================= */
@@ -56,7 +61,7 @@
     .bg-grid {
       position: absolute;
       inset: -50%;
-      background-image: 
+      background-image:
         linear-gradient(rgba(56, 189, 248, 0.07) 1px, transparent 1px),
         linear-gradient(90deg, rgba(56, 189, 248, 0.07) 1px, transparent 1px);
       background-size: 48px 48px;
@@ -91,7 +96,7 @@
     }
 
     /* =========================================================
-       BARRA SUPERIOR Y NAVEGACIÓN POR PESTAÑAS
+       BARRA SUPERIOR Y CONTENEDORES
        ========================================================= */
     .topbar {
       max-width: 1180px;
@@ -132,41 +137,16 @@
       font-weight: 700;
     }
 
-    .top-nav {
+    .top-actions {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
-    }
-
-    .nav-pill {
-      background: transparent;
-      color: var(--text-muted);
-      padding: 9px 18px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 0.92rem;
-      transition: all 0.25s ease;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      cursor: pointer;
-    }
-
-    .nav-pill:hover {
-      color: var(--text-main);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .nav-pill.active {
-      color: #071318;
-      background: var(--gold);
-      border-color: var(--gold);
-      font-weight: 800;
-      box-shadow: 0 4px 16px rgba(251, 191, 36, 0.35);
     }
 
     .container {
       max-width: 1180px;
       margin: 0 auto;
-      padding: 10px 20px 50px;
+      padding: 10px 20px 56px;
       display: flex;
       flex-direction: column;
       gap: 26px;
@@ -208,15 +188,28 @@
       text-decoration: none;
       cursor: pointer;
       border: none;
-      transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.2s ease;
+      transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s ease;
     }
 
-    .btn:hover {
+    .btn:hover:not(:disabled) {
       transform: translateY(-2px);
     }
 
-    .btn:active {
+    .btn:active:not(:disabled) {
       transform: translateY(1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+      animation: none;
+    }
+
+    .btn-sm {
+      padding: 9px 15px;
+      font-size: 0.88rem;
+      border-radius: 10px;
     }
 
     .btn-primary {
@@ -225,7 +218,7 @@
       box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover:not(:disabled) {
       box-shadow: 0 12px 28px rgba(245, 158, 11, 0.55);
     }
 
@@ -235,7 +228,7 @@
       border: 1px solid rgba(56, 189, 248, 0.45);
     }
 
-    .btn-secondary:hover {
+    .btn-secondary:hover:not(:disabled) {
       background: rgba(56, 189, 248, 0.24);
     }
 
@@ -267,7 +260,7 @@
     }
 
     /* =========================================================
-       TOAST / NOTIFICACIÓN INTEGRADA (SIN ALERT/CONFIRM)
+       NOTIFICACIÓN TOAST (SIN ALERT / CONFIRM)
        ========================================================= */
     .toast-banner {
       position: fixed;
@@ -295,7 +288,7 @@
     }
 
     /* =========================================================
-       PÁGINA DE INICIO (HERO, MAPA Y PANEL DOCENTE)
+       PANTALLA INICIAL LIMPIA (SOLO TÍTULO, SVG, NOMBRE Y BOTONES)
        ========================================================= */
     .hero-card {
       display: grid;
@@ -362,8 +355,7 @@
       margin-bottom: 8px;
     }
 
-    .input-row input,
-    .inline-student-check input {
+    .input-row input {
       width: 100%;
       padding: 13px 16px;
       border-radius: 10px;
@@ -376,8 +368,7 @@
       transition: border-color 0.2s;
     }
 
-    .input-row input:focus,
-    .inline-student-check input:focus {
+    .input-row input:focus {
       border-color: var(--gold);
     }
 
@@ -413,207 +404,118 @@
       to { transform: translateY(-10px); }
     }
 
-    /* Mapa del recorrido */
-    .section-header {
-      margin-bottom: 20px;
-    }
-
-    .section-header h2 {
-      font-size: 1.45rem;
-      color: var(--gold);
-      margin-bottom: 4px;
-    }
-
-    .section-header p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    .row-between {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 14px;
-    }
-
-    .expedition-map {
-      position: relative;
-      padding-top: 10px;
-    }
-
-    .map-path-svg {
-      position: absolute;
-      top: 25px;
-      left: 0;
-      width: 100%;
-      height: 110px;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    .map-nodes {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    .map-node {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-md);
-      padding: 18px;
-      cursor: pointer;
-      transition: transform 0.25s ease, border-color 0.25s ease;
-    }
-
-    .map-node:hover {
-      transform: translateY(-5px);
-      border-color: var(--gold);
-    }
-
-    .node-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-      color: #071318;
-      font-weight: 900;
-      font-size: 1.2rem;
+    /* =========================================================
+       MODAL DE INSTRUCCIONES
+       ========================================================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(3, 9, 12, 0.84);
+      backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 12px;
-      box-shadow: 0 0 15px rgba(251, 191, 36, 0.45);
+      padding: 18px;
+      overflow-y: auto;
     }
 
-    .node-info h3 {
-      font-size: 1.05rem;
-      margin-bottom: 6px;
-      color: #f1f5f9;
-    }
-
-    .node-info p {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-    }
-
-    /* Tablas de reportes */
-    .teacher-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .table-responsive {
-      overflow-x: auto;
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .records-table {
+    .modal-dialog {
       width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 0.94rem;
+      max-width: 980px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #0b1d26;
+      border: 2px solid rgba(251, 191, 36, 0.45);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
+      animation: fadeView 0.25s ease;
     }
 
-    .records-table th {
-      background: rgba(7, 19, 24, 0.9);
-      color: var(--gold);
-      padding: 14px 16px;
-      font-weight: 800;
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      letter-spacing: 0.05em;
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      padding-bottom: 14px;
     }
 
-    .records-table td {
-      padding: 13px 16px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    .modal-close-btn {
+      background: rgba(239, 68, 68, 0.16);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      font-weight: 900;
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
-    .records-table tbody tr:hover {
-      background: rgba(56, 189, 248, 0.06);
-    }
-
-    .rank-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 0.82rem;
-    }
-
-    .rank-1 { background: rgba(251, 191, 36, 0.25); color: #fde047; border: 1px solid #fbbf24; }
-    .rank-2 { background: rgba(226, 232, 240, 0.2); color: #e2e8f0; }
-    .rank-3 { background: rgba(217, 119, 6, 0.25); color: #fdba74; }
-
-    /* =========================================================
-       PÁGINA DE INSTRUCCIONES
-       ========================================================= */
-    .briefing-header {
-      margin-bottom: 24px;
+    .modal-close-btn:hover {
+      background: rgba(239, 68, 68, 0.32);
     }
 
     .instructions-grid-2 {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
-      margin-bottom: 18px;
+      gap: 16px;
+      margin-bottom: 16px;
     }
 
     .instructions-grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-      margin-bottom: 18px;
+      gap: 16px;
+      margin-bottom: 16px;
     }
 
     .info-card {
       background: var(--bg-card);
       border: 1px solid rgba(56, 189, 248, 0.22);
       border-radius: var(--radius-md);
-      padding: 20px;
+      padding: 18px;
     }
 
     .card-icon {
-      font-size: 1.9rem;
-      margin-bottom: 8px;
+      font-size: 1.75rem;
+      margin-bottom: 6px;
     }
 
     .info-card h2 {
-      font-size: 1.15rem;
+      font-size: 1.08rem;
       color: var(--cyan);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .info-card p, .styled-list {
       color: #cbd5e1;
-      font-size: 0.94rem;
+      font-size: 0.92rem;
     }
 
     .styled-list {
       padding-left: 18px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .formula-box {
-      background: rgba(7, 19, 24, 0.75);
+      background: rgba(7, 19, 24, 0.8);
       border: 1px dashed var(--gold);
       border-radius: 10px;
-      padding: 10px;
-      margin: 10px 0;
+      padding: 9px;
+      margin: 8px 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      font-size: 0.85rem;
-      gap: 4px;
+      font-size: 0.83rem;
+      gap: 3px;
     }
 
     .formula-box strong {
@@ -623,65 +525,40 @@
     .mechanics-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 14px;
+      margin-bottom: 20px;
     }
 
     .mechanic-box {
       background: rgba(16, 185, 129, 0.08);
       border-left: 4px solid var(--emerald);
-      padding: 16px 18px;
+      padding: 14px 16px;
       border-radius: 0 var(--radius-md) var(--radius-md) 0;
     }
 
     .mechanic-box h3 {
-      font-size: 1.02rem;
+      font-size: 0.98rem;
       color: #6ee7b7;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .mechanic-box p {
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       color: #cbd5e1;
     }
 
-    .start-mission-footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      padding-top: 22px;
+    .modal-footer-bar {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .inline-student-check {
-      flex: 1;
-      min-width: 250px;
-      max-width: 400px;
-    }
-
-    .inline-student-check label {
-      display: block;
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--gold);
-      margin-bottom: 6px;
-    }
-
-    .footer-btns {
-      display: flex;
+      justify-content: flex-end;
       gap: 12px;
       flex-wrap: wrap;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding-top: 16px;
     }
 
     /* =========================================================
-       PÁGINA DE JUEGO / LABORATORIO VIRTUAL
+       STEPPER SECUENCIAL (SOLO AVANCE DESBLOQUEADO)
        ========================================================= */
-    .hidden {
-      display: none !important;
-    }
-
     .phase-stepper {
       display: flex;
       align-items: center;
@@ -695,10 +572,10 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      opacity: 0.45;
+      opacity: 0.4;
       white-space: nowrap;
       transition: opacity 0.3s;
-      cursor: pointer;
+      user-select: none;
     }
 
     .step-item.active,
@@ -756,7 +633,9 @@
       color: var(--text-muted);
     }
 
-    /* Video responsive */
+    /* =========================================================
+       ESTACIÓN 1: VIDEO DE LA CLASE + GUÍA OFFLINE
+       ========================================================= */
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -838,7 +717,9 @@
       margin-top: 22px;
     }
 
-    /* Fase 2: Explicación interactiva */
+    /* =========================================================
+       ESTACIÓN 2: EXPLICACIÓN INTERACTIVA DEL PROCESO
+       ========================================================= */
     .interactive-progress-text {
       font-weight: 800;
       color: var(--gold);
@@ -912,6 +793,10 @@
       transform: translateX(4px);
     }
 
+    .iq-option-btn:disabled {
+      cursor: not-allowed;
+    }
+
     .iq-option-btn.correct {
       border-color: var(--emerald);
       background: rgba(16, 185, 129, 0.25);
@@ -944,7 +829,9 @@
       color: #fca5a5;
     }
 
-    /* Fase 3: HUD y Taller Cronometrado */
+    /* =========================================================
+       ESTACIÓN 3: HUD Y TALLER CRONOMETRADO (10 EJERCICIOS)
+       ========================================================= */
     .game-hud {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -987,7 +874,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Barra de progreso */
     .progress-wrapper {
       margin-bottom: 24px;
     }
@@ -1017,7 +903,6 @@
       transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* Arena de fracciones */
     .arena-board {
       background: radial-gradient(circle at center, rgba(24, 58, 74, 0.9), rgba(9, 24, 32, 0.96));
       border: 2px solid rgba(251, 191, 36, 0.35);
@@ -1141,7 +1026,7 @@
     }
 
     .symbol-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.45;
       cursor: not-allowed;
     }
 
@@ -1164,7 +1049,9 @@
       font-size: 1.02rem;
     }
 
-    /* Fase 4: Reporte Final */
+    /* =========================================================
+       ESTACIÓN 4: REPORTE FINAL, MAPA COMPLETADO Y BITÁCORA EXCEL
+       ========================================================= */
     .report-banner {
       text-align: center;
       margin-bottom: 24px;
@@ -1214,11 +1101,14 @@
       color: #ffffff;
     }
 
-    .breakdown-section {
+    .breakdown-section,
+    .completed-map-box,
+    .leaderboard-section {
       margin-bottom: 26px;
     }
 
     .breakdown-section h3,
+    .completed-map-box h3,
     .leaderboard-section h3 {
       font-size: 1.15rem;
       color: var(--cyan);
@@ -1253,11 +1143,108 @@
       color: #fecaca;
     }
 
+    .map-nodes {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .map-node {
+      background: var(--bg-card);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .node-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .node-info h4 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+      color: #f8fafc;
+    }
+
+    .node-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .row-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .teacher-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     .small-muted {
       color: var(--text-muted);
       font-size: 0.88rem;
-      margin-bottom: 12px;
     }
+
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .records-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.94rem;
+    }
+
+    .records-table th {
+      background: rgba(7, 19, 24, 0.9);
+      color: var(--gold);
+      padding: 14px 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    .records-table td {
+      padding: 13px 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .records-table tbody tr:hover {
+      background: rgba(56, 189, 248, 0.06);
+    }
+
+    .rank-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.82rem;
+    }
+
+    .rank-1 { background: rgba(251, 191, 36, 0.25); color: #fde047; border: 1px solid #fbbf24; }
+    .rank-2 { background: rgba(226, 232, 240, 0.2); color: #e2e8f0; }
+    .rank-3 { background: rgba(217, 119, 6, 0.25); color: #fdba74; }
 
     /* =========================================================
        RESPONSIVE DESIGN
@@ -1273,9 +1260,6 @@
       .map-nodes {
         grid-template-columns: repeat(2, 1fr);
       }
-      .map-path-svg {
-        display: none;
-      }
       .instructions-grid-3 {
         grid-template-columns: 1fr;
       }
@@ -1285,10 +1269,12 @@
       .map-nodes,
       .instructions-grid-2,
       .mechanics-grid,
-      .result-summary-grid {
+      .result-summary-grid,
+      .game-hud {
         grid-template-columns: 1fr;
       }
-      .glass-panel {
+      .glass-panel,
+      .modal-dialog {
         padding: 20px 16px;
       }
       .fraction-stone {
@@ -1299,7 +1285,7 @@
   </style>
 </head>
 <body>
-  <!-- Fondo animado de partículas y mapa topográfico -->
+  <!-- Fondo animado de expedición -->
   <div class="bg-animated" aria-hidden="true">
     <div class="bg-grid"></div>
     <div class="floating-symbol s1">&gt;</div>
@@ -1310,52 +1296,50 @@
     <div class="floating-symbol s6">⅞</div>
   </div>
 
-  <!-- Barra superior de navegación por pestañas -->
+  <!-- Barra superior -->
   <header class="topbar">
     <div class="brand">
-      <span class="brand-badge">LAB VIRTUAL • MATEMÁTICAS</span>
-      <span class="player-tag" id="hud-player-name">Explorador(a): Sin registrar</span>
+      <span class="brand-badge">EXPEDICIÓN FRACCIÓN • LAB VIRTUAL</span>
+      <span class="player-tag hidden" id="hud-player-name"></span>
     </div>
-    <nav class="top-nav" role="tablist">
-      <button class="nav-pill active" data-view="inicio" role="tab">Inicio</button>
-      <button class="nav-pill" data-view="instrucciones" role="tab">Instrucciones</button>
-      <button class="nav-pill" data-view="taller" role="tab">Laboratorio y Taller</button>
-    </nav>
+    <div class="top-actions">
+      <button id="btn-open-instructions-top" class="btn btn-secondary btn-sm">📖 Instrucciones</button>
+      <button id="btn-reset-expedition-top" class="btn btn-danger-outline btn-sm hidden">Reiniciar</button>
+    </div>
   </header>
 
   <main class="container">
     <!-- ====================================================================
-         VISTA 1: INICIO (index.html)
+         1. PANTALLA INICIAL LIMPIA
+         Solo muestra título animado, ilustración SVG, campo de nombre y botones
          ==================================================================== -->
-    <div id="view-inicio" class="view-section">
-      <!-- Hero principal con título animado e ilustraciones SVG -->
-      <section class="hero-card glass-panel">
+    <section id="view-inicio" class="view-section">
+      <div class="hero-card glass-panel">
         <div class="hero-content">
           <div class="expedition-tag">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"></circle>
               <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
             </svg>
-            <span>MISIÓN DE EXPEDICIÓN NUMÉRICA</span>
+            <span>EL TEMPLO DE LOS SÍMBOLOS PERDIDOS</span>
           </div>
 
           <h1 class="animated-title">
             EXPEDICIÓN <span class="title-highlight">FRACCIÓN</span>
           </h1>
           <p class="hero-subtitle">
-            Atraviesa la selva ancestral, descifra el método de los productos cruzados y abre las 10 puertas del Templo de los Símbolos Perdidos (<strong>&lt;</strong>, <strong>&gt;</strong>, <strong>=</strong>) en el menor tiempo posible.
+            Domina la comparación de fracciones (<strong>&lt;</strong>, <strong>=</strong>, <strong>&gt;</strong>) y cruza las 10 puertas del templo en el menor tiempo posible.
           </p>
 
-          <!-- Registro del estudiante -->
           <div class="student-register-box">
             <label for="student-name" class="input-label">
               Nombre y Apellido del Explorador(a):
             </label>
             <div class="input-row">
-              <input 
-                type="text" 
-                id="student-name" 
-                placeholder="Ej. Camila Mendoza" 
+              <input
+                type="text"
+                id="student-name"
+                placeholder="Escribe tu nombre y apellido..."
                 maxlength="45"
                 autocomplete="off"
               >
@@ -1370,7 +1354,7 @@
               </svg>
               Comenzar aventura
             </button>
-            <button id="btn-go-instructions" class="btn btn-secondary">
+            <button id="btn-open-instructions-hero" class="btn btn-secondary">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
                 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
@@ -1380,7 +1364,7 @@
           </div>
         </div>
 
-        <!-- Ilustración temática SVG de expedición -->
+        <!-- Ilustración SVG de expedición -->
         <div class="hero-visual">
           <svg class="expedition-illustration" viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -1425,263 +1409,59 @@
             </g>
           </svg>
         </div>
-      </section>
-
-      <!-- Mapa interactivo del recorrido -->
-      <section class="map-section glass-panel">
-        <div class="section-header">
-          <h2>Mapa del Recorrido de la Expedición</h2>
-          <p>Haz clic en cualquier estación para saltar directamente o sigue el recorrido ordenado</p>
-        </div>
-
-        <div class="expedition-map">
-          <svg class="map-path-svg" viewBox="0 0 900 180" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M 90 120 Q 250 20, 450 110 T 810 70" fill="none" stroke="#fbbf24" stroke-width="5" stroke-dasharray="12 10" stroke-linecap="round"/>
-          </svg>
-
-          <div class="map-nodes">
-            <div class="map-node" data-jump-phase="video">
-              <div class="node-icon">1</div>
-              <div class="node-info">
-                <h3>Campamento Base</h3>
-                <p>Observación de la clase en video sobre el truco de multiplicación cruzada.</p>
-              </div>
-            </div>
-
-            <div class="map-node" data-jump-phase="interactive">
-              <div class="node-icon">2</div>
-              <div class="node-info">
-                <h3>Puente de las Diagonales</h3>
-                <p>Explicación interactiva paso a paso para verificar tu dominio del método.</p>
-              </div>
-            </div>
-
-            <div class="map-node" data-jump-phase="workshop">
-              <div class="node-icon">3</div>
-              <div class="node-info">
-                <h3>Templo de los 10 Retos</h3>
-                <p>Taller cronometrado: 10 ejercicios (1 punto cada uno) contra el reloj.</p>
-              </div>
-            </div>
-
-            <div class="map-node" data-jump-phase="report">
-              <div class="node-icon">4</div>
-              <div class="node-info">
-                <h3>Podio y Bitácora</h3>
-                <p>Ranking de velocidad, calificación final y descarga de reporte Excel.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Panel del Docente: Reporte y Descarga Excel -->
-      <section class="teacher-panel glass-panel">
-        <div class="section-header row-between">
-          <div>
-            <h2>Bitácora de Expediciones (Panel Docente)</h2>
-            <p>Registro automático de estudiantes, calificaciones sobre 10 puntos y tiempos récord.</p>
-          </div>
-          <div class="teacher-actions">
-            <button id="btn-export-excel" class="btn btn-success">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              Descargar Reporte Excel (.csv)
-            </button>
-            <button id="btn-clear-records" class="btn btn-danger-outline" title="Borrar historial guardado">
-              Limpiar historial
-            </button>
-          </div>
-        </div>
-
-        <div class="table-responsive">
-          <table class="records-table" id="records-table">
-            <thead>
-              <tr>
-                <th>Posición</th>
-                <th>Nombre del Estudiante</th>
-                <th>Calificación (10 pts)</th>
-                <th>Tiempo Empleado</th>
-                <th>Fecha y Hora</th>
-              </tr>
-            </thead>
-            <tbody id="records-tbody"></tbody>
-          </table>
-        </div>
-      </section>
-    </div>
+      </div>
+    </section>
 
     <!-- ====================================================================
-         VISTA 2: INSTRUCCIONES (instrucciones.html)
+         3. RECORRIDO SECUENCIAL BLOQUEADO (ESTACIONES 1, 2, 3 Y 4)
          ==================================================================== -->
-    <div id="view-instrucciones" class="view-section hidden">
-      <section class="glass-panel mission-briefing">
-        <div class="briefing-header">
-          <span class="expedition-tag">ARCHIVO CONFIDENCIAL DE EXPEDICIÓN</span>
-          <h1 class="animated-title">Manual de Campo: <span class="title-highlight">Comparación de Fracciones</span></h1>
-        </div>
-
-        <!-- 1. Historia y Objetivo -->
-        <div class="instructions-grid-2">
-          <article class="info-card">
-            <div class="card-icon">🗺️</div>
-            <h2>Historia de la Expedición</h2>
-            <p>
-              En lo profundo del Valle de los Números Antiguos se alza el <strong>Templo de los Símbolos Perdidos</strong>. Sus 10 compuertas de piedra solo se abren cuando un explorador identifica correctamente qué fracción contiene mayor energía, cuál es menor o si ambas son equivalentes. ¡Tu equipo depende de tu agilidad mental para cruzar antes de que se agote el tiempo!
-            </p>
-          </article>
-
-          <article class="info-card">
-            <div class="card-icon">🎯</div>
-            <h2>Objetivo del Juego</h2>
-            <p>
-              Aprender y dominar el método de <strong>comparación de fracciones mediante multiplicación en diagonal</strong> (productos cruzados), superando primero el entrenamiento teórico y resolviendo posteriormente los <strong>10 retos del taller</strong> con la máxima calificación (10/10) y en el <strong>menor tiempo posible</strong> para liderar el ranking.
-            </p>
-          </article>
-        </div>
-
-        <!-- 2. Cómo jugar, Cómo responder, Cómo usar los controles -->
-        <div class="instructions-grid-3">
-          <article class="info-card">
-            <div class="card-icon">🧭</div>
-            <h2>Cómo Jugar</h2>
-            <ol class="styled-list">
-              <li><strong>Fase 1 (Video Clase):</strong> Observa el video explicativo sobre el truco para comparar fracciones al instante.</li>
-              <li><strong>Fase 2 (Explicación Interactiva):</strong> Responde las preguntas rápidas sobre el procedimiento paso a paso haciendo clic en la opción correcta.</li>
-              <li><strong>Fase 3 (Taller Cronometrado):</strong> Resuelve 10 ejercicios consecutivos de comparación de fracciones.</li>
-            </ol>
-          </article>
-
-          <article class="info-card">
-            <div class="card-icon">👆</div>
-            <h2>Cómo Responder</h2>
-            <p>
-              Multiplica en diagonal de abajo hacia arriba:
-            </p>
-            <div class="formula-box">
-              <span>Denominador derecho × Numerador izquierdo</span>
-              <strong>VS</strong>
-              <span>Denominador izquierdo × Numerador derecho</span>
-            </div>
-            <p>
-              Luego selecciona el símbolo central correcto: <strong>&lt;</strong> (menor que), <strong>=</strong> (equivalente) o <strong>&gt;</strong> (mayor que).
-            </p>
-          </article>
-
-          <article class="info-card">
-            <div class="card-icon">🎮</div>
-            <h2>Cómo Usar los Controles</h2>
-            <ul class="styled-list">
-              <li><strong>Ratón / Pantalla Táctil:</strong> Haz clic o toca directamente los botones de respuesta o los símbolos <code>&lt;</code>, <code>=</code>, <code>&gt;</code>.</li>
-              <li><strong>Atajos de Teclado (Taller):</strong>
-                <br>• Flecha Izquierda (<code>←</code>) para <strong>&lt;</strong>
-                <br>• Flecha Abajo (<code>↓</code>) para <strong>=</strong>
-                <br>• Flecha Derecha (<code>→</code>) para <strong>&gt;</strong>
-              </li>
-            </ul>
-          </article>
-        </div>
-
-        <!-- 3. Mecánicas de gamificación -->
-        <div class="mechanics-grid">
-          <article class="mechanic-box">
-            <h3>⭐ Cómo Ganar Puntos y Sistema de Puntuación</h3>
-            <p>
-              El taller consta de <strong>10 ejercicios</strong>. Cada ejercicio resuelto correctamente otorga exactamente <strong>1 punto</strong>, para una calificación máxima de <strong>10 puntos</strong>. Tu nota queda vinculada automáticamente a tu nombre en el reporte Excel del docente.
-            </p>
-          </article>
-
-          <article class="mechanic-box">
-            <h3>❤️ Sistema de Vidas</h3>
-            <p>
-              Inicias la expedición con <strong>3 corazones de energía (❤️❤️❤️)</strong>. Cada respuesta incorrecta consume 1 corazón. Si pierdes tus 3 corazones antes de llegar al reto 10, la misión finaliza con los puntos que hayas logrado acumular hasta ese instante.
-            </p>
-          </article>
-
-          <article class="mechanic-box">
-            <h3>⏱️ Cronómetro de Velocidad</h3>
-            <p>
-              El cronómetro arranca automáticamente al iniciar el ejercicio 1 del taller y se detiene al completar el ejercicio 10. <strong>¡Gana quien obtenga la mayor calificación en el menor tiempo!</strong> En caso de empate en puntos, el menor tiempo decide el primer lugar.
-            </p>
-          </article>
-
-          <article class="mechanic-box">
-            <h3>📊 Barra de Progreso</h3>
-            <p>
-              En la parte superior del taller verás una barra de expedición dividida en <strong>10 tramos</strong> que avanza y cambia de color con cada compuerta superada, indicándote exactamente cuántos ejercicios faltan para la meta.
-            </p>
-          </article>
-        </div>
-
-        <!-- Verificación rápida de nombre -->
-        <div class="start-mission-footer">
-          <div class="inline-student-check">
-            <label for="instr-student-name">Explorador(a) registrado(a):</label>
-            <input type="text" id="instr-student-name" placeholder="Escribe tu nombre aquí..." maxlength="45">
-          </div>
-          <div class="footer-btns">
-            <button id="btn-back-home" class="btn btn-secondary">← Volver al inicio</button>
-            <button id="btn-begin-mission" class="btn btn-primary btn-pulse">
-              🚀 Comenzar misión
-            </button>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- ====================================================================
-         VISTA 3: LABORATORIO Y TALLER (juego.html)
-         ==================================================================== -->
-    <div id="view-taller" class="view-section hidden">
-      <!-- Indicador de Fases de la Clase -->
-      <div class="phase-stepper glass-panel">
-        <div class="step-item active" id="step-badge-1" data-step-target="video">
+    <section id="view-expedition" class="view-section hidden">
+      <!-- Indicador visual de progreso secuencial (no permite saltar etapas) -->
+      <div class="phase-stepper glass-panel" aria-label="Progreso secuencial de estaciones">
+        <div class="step-item active" id="step-badge-1">
           <span class="step-num">1</span>
           <span class="step-text">Video Clase</span>
         </div>
         <div class="step-connector"></div>
-        <div class="step-item" id="step-badge-2" data-step-target="interactive">
+        <div class="step-item" id="step-badge-2">
           <span class="step-num">2</span>
           <span class="step-text">Explicación Interactiva</span>
         </div>
         <div class="step-connector"></div>
-        <div class="step-item" id="step-badge-3" data-step-target="workshop">
+        <div class="step-item" id="step-badge-3">
           <span class="step-num">3</span>
-          <span class="step-text">Taller Cronometrado (10 Retos)</span>
+          <span class="step-text">Taller (10 Retos)</span>
         </div>
         <div class="step-connector"></div>
-        <div class="step-item" id="step-badge-4" data-step-target="report">
+        <div class="step-item" id="step-badge-4">
           <span class="step-num">4</span>
           <span class="step-text">Reporte Final</span>
         </div>
       </div>
 
-      <!-- ETAPA 1: VIDEO DE LA CLASE -->
-      <section id="phase-video" class="glass-panel phase-card">
+      <!-- ESTACIÓN 1: VIDEO DE LA CLASE + GUÍA VISUAL OFFLINE -->
+      <article id="phase-video" class="glass-panel">
         <div class="phase-header">
           <span class="expedition-tag">ESTACIÓN 1 • CAMPAMENTO BASE</span>
-          <h2>Clase de Hoy: ¿Cómo comparar fracciones al instante?</h2>
-          <p>Observa con atención el video explicativo sobre el método de multiplicación en diagonal antes de cruzar el puente.</p>
+          <h2>Clase de Hoy: Comparación de Fracciones</h2>
+          <p>Observa el video sobre cómo comparar fracciones al instante y revisa la guía de productos cruzados antes de avanzar.</p>
         </div>
 
         <div class="video-wrapper">
-          <iframe 
+          <iframe
             id="youtube-lesson"
-            src="https://www.youtube.com/embed/3N0hSg1r7r8?rel=0" 
+            src="https://www.youtube.com/embed/3N0hSg1r7r8?rel=0"
             title="Comparar fracciones al instante | Truco - Matemóvil"
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen>
           </iframe>
         </div>
 
         <details class="offline-guide" open>
-          <summary>📖 Ver guía visual rápida del método (disponible sin conexión a Internet)</summary>
+          <summary>📖 Guía visual offline: Multiplicación en diagonal (productos cruzados)</summary>
           <div class="offline-guide-content">
-            <p>Para comparar dos fracciones sin calcular decimales, <strong>multiplica en diagonal (en cruz)</strong> empezando siempre de abajo hacia arriba:</p>
+            <p>Para comparar dos fracciones, <strong>multiplica en diagonal (en cruz)</strong> de abajo hacia arriba:</p>
             <div class="demo-cross">
               <div class="demo-frac">
                 <span class="num">3</span>
@@ -1689,8 +1469,8 @@
                 <span class="den">8</span>
               </div>
               <div class="demo-arrows">
-                <div>↖ 13 × 3 = <strong>39</strong> (va a la izquierda)</div>
-                <div>↗ 8 × 5 = <strong>40</strong> (va a la derecha)</div>
+                <div>↖ 13 × 3 = <strong>39</strong> (valor izquierdo)</div>
+                <div>↗ 8 × 5 = <strong>40</strong> (valor derecho)</div>
               </div>
               <div class="demo-frac">
                 <span class="num">5</span>
@@ -1698,23 +1478,23 @@
                 <span class="den">13</span>
               </div>
             </div>
-            <p>Como <strong>39 &lt; 40</strong>, entonces <strong>3/8 &lt; 5/13</strong>. Si los productos son iguales, las fracciones son <strong>equivalentes (=)</strong>.</p>
+            <p>Como <strong>39 &lt; 40</strong>, entonces <strong>3/8 &lt; 5/13</strong>. Si ambos productos son iguales, las fracciones son <strong>equivalentes (=)</strong>.</p>
           </div>
         </details>
 
         <div class="phase-actions">
-          <button id="btn-to-interactive" class="btn btn-primary btn-pulse">
-            Continuar a la Explicación Interactiva →
+          <button id="btn-complete-video" class="btn btn-primary btn-pulse">
+            Completar Video y Pasar a Explicación Interactiva →
           </button>
         </div>
-      </section>
+      </article>
 
-      <!-- ETAPA 2: EXPLICACIÓN INTERACTIVA DEL PROCESO -->
-      <section id="phase-interactive" class="glass-panel phase-card hidden">
+      <!-- ESTACIÓN 2: EXPLICACIÓN INTERACTIVA CON BLOQUEO SECUENCIAL -->
+      <article id="phase-interactive" class="glass-panel hidden">
         <div class="phase-header">
           <span class="expedition-tag">ESTACIÓN 2 • PUENTE DE LAS DIAGONALES</span>
-          <h2>Entrenamiento Interactivo del Procedimiento</h2>
-          <p>Pincha la respuesta correcta en cada paso para demostrar que dominas el proceso.</p>
+          <h2>Explicación Interactiva del Procedimiento</h2>
+          <p>Pincha la respuesta correcta en cada paso. El botón de avance se habilita únicamente al acertar.</p>
         </div>
 
         <div class="interactive-progress-text" id="iq-counter">Pregunta de procedimiento 1 de 4</div>
@@ -1727,27 +1507,26 @@
         </div>
 
         <div class="phase-actions">
-          <button id="btn-back-video" class="btn btn-secondary">← Repasar video</button>
-          <button id="btn-next-iq" class="btn btn-primary hidden">Siguiente pregunta →</button>
-          <button id="btn-start-workshop" class="btn btn-success btn-pulse hidden">
-            ⏱️ ¡Iniciar Taller Cronometrado (10 Ejercicios)!
+          <button id="btn-next-iq" class="btn btn-primary hidden" disabled>
+            Siguiente pregunta →
+          </button>
+          <button id="btn-start-workshop" class="btn btn-success btn-pulse hidden" disabled>
+            ⏱️ Iniciar Taller Cronometrado (10 Ejercicios)
           </button>
         </div>
-      </section>
+      </article>
 
-      <!-- ETAPA 3: TALLER INTERACTIVO CRONOMETRADO (10 EJERCICIOS) -->
-      <section id="phase-workshop" class="glass-panel phase-card hidden">
+      <!-- ESTACIÓN 3: TALLER CRONOMETRADO DE 10 EJERCICIOS -->
+      <article id="phase-workshop" class="glass-panel hidden">
         <div class="game-hud">
           <div class="hud-stat">
             <span class="hud-label">VIDAS</span>
             <div class="hud-lives" id="hud-lives" aria-label="3 vidas restantes">❤️❤️❤️</div>
           </div>
-
           <div class="hud-stat">
             <span class="hud-label">CALIFICACIÓN</span>
             <div class="hud-score"><span id="hud-score">0</span> / 10</div>
           </div>
-
           <div class="hud-stat">
             <span class="hud-label">TIEMPO</span>
             <div class="hud-timer" id="hud-timer">00:00.0</div>
@@ -1756,7 +1535,7 @@
 
         <div class="progress-wrapper">
           <div class="progress-labels">
-            <span id="progress-label-text">Compuerta 1 de 10</span>
+            <span id="progress-label-text">Ejercicio 1 de 10</span>
             <span id="progress-percent">0%</span>
           </div>
           <div class="progress-track">
@@ -1765,7 +1544,7 @@
         </div>
 
         <div class="arena-board" id="arena-board">
-          <p class="arena-prompt">Compara ambas fracciones seleccionando el símbolo correcto (clic o teclas ←, ↓, →):</p>
+          <p class="arena-prompt">Responde cada ejercicio seleccionando <strong>&lt;</strong>, <strong>=</strong> o <strong>&gt;</strong> (clic o teclas ←, ↓, →):</p>
 
           <div class="fractions-arena">
             <div class="fraction-stone" id="left-stone">
@@ -1802,14 +1581,14 @@
 
           <div id="workshop-feedback" class="workshop-feedback"></div>
         </div>
-      </section>
+      </article>
 
-      <!-- ETAPA 4: REPORTE FINAL, PODIO Y EXPORTACIÓN EXCEL -->
-      <section id="phase-report" class="glass-panel phase-card hidden">
-        <div class="report-banner" id="report-banner">
+      <!-- ESTACIÓN 4: REPORTE FINAL, MAPA COMPLETADO Y BITÁCORA EXCEL -->
+      <article id="phase-report" class="glass-panel hidden">
+        <div class="report-banner">
           <div class="trophy-icon" id="report-trophy">🏆</div>
           <h2 id="report-title">¡Expedición Completada!</h2>
-          <p id="report-subtitle">Has cruzado el Templo de los Símbolos Perdidos.</p>
+          <p id="report-subtitle">Has concluido el taller de comparación de fracciones.</p>
         </div>
 
         <div class="result-summary-grid">
@@ -1822,25 +1601,67 @@
             <strong class="sum-value" id="res-score">0 / 10</strong>
           </div>
           <div class="summary-card highlight-time">
-            <span class="sum-label">Tiempo Total</span>
+            <span class="sum-label">Tiempo Empleado</span>
             <strong class="sum-value" id="res-time">00:00.0</strong>
           </div>
         </div>
 
+        <!-- Desglose de los 10 ejercicios -->
         <div class="breakdown-section">
-          <h3>Detalle de tus 10 Ejercicios del Taller</h3>
+          <h3>Detalle de los 10 Ejercicios del Taller</h3>
           <div class="breakdown-grid" id="breakdown-grid"></div>
         </div>
 
+        <!-- Mapa del recorrido completado (visible al finalizar) -->
+        <div class="completed-map-box">
+          <h3>Mapa del Recorrido Completado</h3>
+          <div class="map-nodes">
+            <div class="map-node">
+              <div class="node-icon">✓</div>
+              <div class="node-info">
+                <h4>1. Campamento Base</h4>
+                <p>Video de la clase y guía de productos cruzados superados.</p>
+              </div>
+            </div>
+            <div class="map-node">
+              <div class="node-icon">✓</div>
+              <div class="node-info">
+                <h4>2. Puente de las Diagonales</h4>
+                <p>Preguntas interactivas del procedimiento resueltas.</p>
+              </div>
+            </div>
+            <div class="map-node">
+              <div class="node-icon">✓</div>
+              <div class="node-info">
+                <h4>3. Templo de los 10 Retos</h4>
+                <p>Taller cronometrado con puntuación de 1 pt por acierto.</p>
+              </div>
+            </div>
+            <div class="map-node">
+              <div class="node-icon">✓</div>
+              <div class="node-info">
+                <h4>4. Bitácora y Podio</h4>
+                <p>Calificación y tiempo registrados para exportación Excel.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bitácora de expediciones y exportación Excel -->
         <div class="leaderboard-section">
           <div class="row-between">
             <div>
-              <h3>Clasificación General (Gana mayor calificación en menor tiempo)</h3>
-              <p class="small-muted">Tu resultado se ha vinculado automáticamente a tu nombre para el reporte Excel.</p>
+              <h3>Bitácora de Expediciones (Mayor calificación y menor tiempo ganan)</h3>
+              <p class="small-muted">Registro vinculado con el nombre del estudiante listo para descargar en Excel.</p>
             </div>
-            <button id="btn-report-excel" class="btn btn-success">
-              📥 Descargar Reporte Excel (.csv)
-            </button>
+            <div class="teacher-actions">
+              <button id="btn-report-excel" class="btn btn-success">
+                📥 Descargar Reporte Excel (.csv)
+              </button>
+              <button id="btn-clear-records" class="btn btn-danger-outline">
+                Limpiar historial
+              </button>
+            </div>
           </div>
 
           <div class="table-responsive">
@@ -1851,7 +1672,7 @@
                   <th>Nombre</th>
                   <th>Calificación</th>
                   <th>Tiempo</th>
-                  <th>Fecha</th>
+                  <th>Fecha y Hora</th>
                 </tr>
               </thead>
               <tbody id="report-tbody"></tbody>
@@ -1861,19 +1682,129 @@
 
         <div class="phase-actions">
           <button id="btn-retry-workshop" class="btn btn-primary">🔄 Intentar mejorar mi tiempo</button>
-          <button id="btn-report-home" class="btn btn-secondary">🏠 Volver al inicio (Otro estudiante)</button>
+          <button id="btn-new-student" class="btn btn-secondary">👤 Nuevo explorador</button>
         </div>
-      </section>
-    </div>
+      </article>
+    </section>
   </main>
 
-  <!-- Contenedor de notificaciones toast (reemplaza alert/confirm) -->
+  <!-- ====================================================================
+       2. MODAL DE INSTRUCCIONES COMPLETO
+       ==================================================================== -->
+  <div id="instructions-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-instr-title">
+    <div class="modal-dialog">
+      <div class="modal-top">
+        <div>
+          <span class="expedition-tag">MANUAL DE EXPEDICIÓN</span>
+          <h2 id="modal-instr-title" class="animated-title" style="font-size:1.75rem; margin-bottom:0;">
+            Instrucciones de <span class="title-highlight">Expedición Fracción</span>
+          </h2>
+        </div>
+        <button id="btn-close-instructions" class="modal-close-btn" aria-label="Cerrar instrucciones">✕</button>
+      </div>
+
+      <div class="instructions-grid-2">
+        <article class="info-card">
+          <div class="card-icon">🗺️</div>
+          <h2>Historia</h2>
+          <p>
+            En lo profundo del Valle de los Números Antiguos se alza el <strong>Templo de los Símbolos Perdidos</strong>. Sus 10 compuertas solo se abren cuando comparas correctamente cada par de fracciones y avanzas sin perder toda tu energía.
+          </p>
+        </article>
+
+        <article class="info-card">
+          <div class="card-icon">🎯</div>
+          <h2>Objetivo del Juego</h2>
+          <p>
+            Aprender el truco de multiplicación en diagonal, superar el entrenamiento interactivo y resolver los <strong>10 ejercicios del taller</strong> logrando la mayor calificación (hasta 10/10) en el <strong>menor tiempo posible</strong>.
+          </p>
+        </article>
+      </div>
+
+      <div class="instructions-grid-3">
+        <article class="info-card">
+          <div class="card-icon">🧭</div>
+          <h2>Cómo Jugar</h2>
+          <ol class="styled-list">
+            <li>Escribe tu nombre y pulsa <strong>Comenzar aventura</strong>.</li>
+            <li>Observa el video y la guía en la <strong>Estación 1</strong>.</li>
+            <li>Responde las preguntas paso a paso en la <strong>Estación 2</strong>.</li>
+            <li>Completa los 10 ejercicios en la <strong>Estación 3</strong>.</li>
+          </ol>
+        </article>
+
+        <article class="info-card">
+          <div class="card-icon">👆</div>
+          <h2>Cómo Responder</h2>
+          <p>Multiplica en cruz de abajo hacia arriba:</p>
+          <div class="formula-box">
+            <span>Den. derecho × Num. izquierdo</span>
+            <strong>VS</strong>
+            <span>Den. izquierdo × Num. derecho</span>
+          </div>
+          <p>Elige <strong>&lt;</strong>, <strong>=</strong> o <strong>&gt;</strong> según corresponda.</p>
+        </article>
+
+        <article class="info-card">
+          <div class="card-icon">🎮</div>
+          <h2>Cómo Usar los Controles</h2>
+          <ul class="styled-list">
+            <li><strong>Clic o Toque:</strong> Pincha directamente las opciones o botones de símbolo.</li>
+            <li><strong>Teclado en el Taller:</strong>
+              <br>• <code>←</code> para <strong>&lt;</strong>
+              <br>• <code>↓</code> para <strong>=</strong>
+              <br>• <code>→</code> para <strong>&gt;</strong>
+            </li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="mechanics-grid">
+        <article class="mechanic-box">
+          <h3>⭐ Cómo Ganar Puntos y Sistema de Puntuación</h3>
+          <p>
+            Cada ejercicio correcto del taller suma <strong>1 punto</strong>. Son <strong>10 ejercicios</strong> en total (calificación máxima de <strong>10 puntos</strong>), vinculados a tu nombre en la bitácora y en la descarga Excel.
+          </p>
+        </article>
+
+        <article class="mechanic-box">
+          <h3>❤️ Sistema de Vidas</h3>
+          <p>
+            Comienzas con <strong>3 corazones (❤️❤️❤️)</strong>. Cada error resta 1 vida; si pierdes las 3 vidas, la misión termina y guarda los puntos obtenidos hasta ese momento.
+          </p>
+        </article>
+
+        <article class="mechanic-box">
+          <h3>⏱️ Cronómetro</h3>
+          <p>
+            Mide tu tiempo en vivo durante los 10 retos. <strong>Gana quien obtenga mayor calificación en menor tiempo</strong> (y ante igual puntuación, gana quien termine más rápido).
+          </p>
+        </article>
+
+        <article class="mechanic-box">
+          <h3>📊 Barra de Progreso</h3>
+          <p>
+            Muestra tu avance del ejercicio 1 al 10 en porcentaje y longitud de barra a medida que respondes cada compuerta sin poder saltar etapas.
+          </p>
+        </article>
+      </div>
+
+      <div class="modal-footer-bar">
+        <button id="btn-modal-secondary-close" class="btn btn-secondary">Cerrar</button>
+        <button id="btn-begin-mission-modal" class="btn btn-primary btn-pulse">
+          🚀 Comenzar misión
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de notificaciones toast -->
   <div id="toast-container"></div>
 
   <script>
     /* ==========================================================================
        EXPEDICIÓN FRACCIÓN - LÓGICA DEL LABORATORIO VIRTUAL Y TALLER
-       100% Vanilla JavaScript - Vista Previa Interactiva Integrada
+       100% Vanilla JavaScript - Bloqueo secuencial estricto - Sin librerías
        ========================================================================== */
     (() => {
       "use strict";
@@ -1883,22 +1814,30 @@
         RECORDS: "expedicion_fraccion_registros_docente"
       };
 
+      const TOTAL_EXERCISES = 10;
+
       /* ------------------------------------------------------------------------
-         NOTIFICACIONES VISUALES SIN ALERT/CONFIRM
+         NOTIFICACIONES TOAST (SIN ALERT / CONFIRM)
          ------------------------------------------------------------------------ */
-      let toastTimeout = null;
+      let toastTimer = null;
       function showToast(message) {
         const container = document.getElementById("toast-container");
         if (!container) return;
         container.innerHTML = `<div class="toast-banner"><span>🧭</span><span>${escapeHtml(message)}</span></div>`;
-        if (toastTimeout) clearTimeout(toastTimeout);
-        toastTimeout = setTimeout(() => {
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
           container.innerHTML = "";
-        }, 3800);
+        }, 3600);
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
       }
 
       /* ------------------------------------------------------------------------
-         SISTEMA DE SONIDO SINTETIZADO (WEB AUDIO API - FUNCIONA OFFLINE)
+         SONIDOS SINTETIZADOS CON WEB AUDIO API (FUNCIONA OFFLINE)
          ------------------------------------------------------------------------ */
       const SoundFX = {
         ctx: null,
@@ -1941,26 +1880,27 @@
       };
 
       /* ------------------------------------------------------------------------
-         UTILIDADES DE ALMACENAMIENTO, FORMATO DE TIEMPO Y EXPORTACIÓN EXCEL
+         ALMACENAMIENTO, TIEMPO Y EXPORTACIÓN EXCEL (.CSV)
          ------------------------------------------------------------------------ */
       function getCurrentStudent() {
-        return localStorage.getItem(STORAGE_KEYS.CURRENT_STUDENT) || "";
+        return (localStorage.getItem(STORAGE_KEYS.CURRENT_STUDENT) || "").trim();
       }
 
       function setCurrentStudent(name) {
         const clean = name.trim();
         localStorage.setItem(STORAGE_KEYS.CURRENT_STUDENT, clean);
-        syncStudentInputs(clean);
+        updateStudentHud(clean);
       }
 
-      function syncStudentInputs(name) {
-        const homeInput = document.getElementById("student-name");
-        const instrInput = document.getElementById("instr-student-name");
+      function updateStudentHud(name) {
         const hudTag = document.getElementById("hud-player-name");
-        if (homeInput && homeInput.value !== name) homeInput.value = name;
-        if (instrInput && instrInput.value !== name) instrInput.value = name;
-        if (hudTag) {
-          hudTag.textContent = name ? `Explorador(a): ${name}` : "Explorador(a): Sin registrar";
+        if (!hudTag) return;
+        if (name) {
+          hudTag.textContent = `Explorador(a): ${name}`;
+          hudTag.classList.remove("hidden");
+        } else {
+          hudTag.textContent = "";
+          hudTag.classList.add("hidden");
         }
       }
 
@@ -1976,12 +1916,13 @@
       function saveRecord(record) {
         const records = getRecords();
         records.push(record);
+        // Mayor calificación primero; en empate, menor tiempo empleado gana
         records.sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
           return a.timeMs - b.timeMs;
         });
         localStorage.setItem(STORAGE_KEYS.RECORDS, JSON.stringify(records));
-        renderAllTables();
+        renderReportTable();
         return records;
       }
 
@@ -1994,29 +1935,23 @@
         return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${tenths}`;
       }
 
-      function escapeHtml(str) {
-        const div = document.createElement("div");
-        div.textContent = str;
-        return div.innerHTML;
-      }
-
       function exportRecordsToExcel() {
         const records = getRecords();
         if (records.length === 0) {
-          showToast("Aún no hay registros de estudiantes completados para exportar.");
+          showToast("Aún no hay registros de estudiantes para exportar.");
           return;
         }
 
-        let csvContent = "\uFEFF";
-        csvContent += "Puesto;Nombre del Estudiante;Calificacion (sobre 10);Tiempo Empleado;Segundos Totales;Fecha y Hora\n";
+        let csv = "\uFEFF";
+        csv += "Puesto;Nombre del Estudiante;Calificacion (sobre 10);Tiempo Empleado;Segundos Totales;Fecha y Hora\n";
 
         records.forEach((rec, index) => {
           const cleanName = `"${String(rec.name).replace(/"/g, '""')}"`;
           const secsDecimal = (rec.timeMs / 1000).toFixed(1).replace(".", ",");
-          csvContent += `${index + 1};${cleanName};${rec.score};${rec.timeFormatted};${secsDecimal};${rec.date}\n`;
+          csv += `${index + 1};${cleanName};${rec.score};${rec.timeFormatted};${secsDecimal};${rec.date}\n`;
         });
 
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         const today = new Date().toISOString().slice(0, 10);
@@ -2026,11 +1961,11 @@
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        showToast("Reporte Excel (.csv) descargado correctamente.");
+        showToast("Reporte Excel (.csv) descargado.");
       }
 
-      function renderRecordsTable(tbodyId) {
-        const tbody = document.getElementById(tbodyId);
+      function renderReportTable() {
+        const tbody = document.getElementById("report-tbody");
         if (!tbody) return;
         const records = getRecords();
 
@@ -2038,7 +1973,7 @@
           tbody.innerHTML = `
             <tr>
               <td colspan="5" style="text-align:center; color:#94a3b8; padding:20px;">
-                Aún no hay expediciones registradas. ¡Ingresa tu nombre y completa el taller para aparecer en el podio!
+                Aún no hay expediciones registradas.
               </td>
             </tr>
           `;
@@ -2065,153 +2000,19 @@
         }).join("");
       }
 
-      function renderAllTables() {
-        renderRecordsTable("records-tbody");
-        renderRecordsTable("report-tbody");
-      }
-
       /* ------------------------------------------------------------------------
-         NAVEGACIÓN ENTRE LAS 3 VISTAS PRINCIPALES (SPA)
+         ESTADO SECUENCIAL DE LA EXPEDICIÓN (BLOQUEO DE AVANCE)
+         Etapas: "inicio" -> "video" -> "interactive" -> "workshop" -> "report"
          ------------------------------------------------------------------------ */
-      const views = {
-        inicio: document.getElementById("view-inicio"),
-        instrucciones: document.getElementById("view-instrucciones"),
-        taller: document.getElementById("view-taller")
-      };
-      const navPills = document.querySelectorAll(".nav-pill");
+      let currentStage = "inicio";
+      let videoCompleted = false;
+      let interactiveStepIndex = 0;
+      let currentInteractiveAnsweredCorrectly = false;
 
-      function switchView(viewName) {
-        Object.entries(views).forEach(([key, el]) => {
-          if (!el) return;
-          if (key === viewName) el.classList.remove("hidden");
-          else el.classList.add("hidden");
-        });
+      const viewInicio = document.getElementById("view-inicio");
+      const viewExpedition = document.getElementById("view-expedition");
+      const btnResetTop = document.getElementById("btn-reset-expedition-top");
 
-        navPills.forEach((pill) => {
-          pill.classList.toggle("active", pill.getAttribute("data-view") === viewName);
-        });
-
-        if (viewName === "taller" && !getCurrentStudent()) {
-          setCurrentStudent("Explorador(a) Invitado");
-        }
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      navPills.forEach((pill) => {
-        pill.addEventListener("click", () => {
-          switchView(pill.getAttribute("data-view"));
-        });
-      });
-
-      /* ------------------------------------------------------------------------
-         LÓGICA DE VISTA INICIO E INSTRUCCIONES
-         ------------------------------------------------------------------------ */
-      const nameInput = document.getElementById("student-name");
-      const instrNameInput = document.getElementById("instr-student-name");
-      const feedbackEl = document.getElementById("name-feedback");
-      const btnStartAdventure = document.getElementById("btn-start-adventure");
-      const btnGoInstructions = document.getElementById("btn-go-instructions");
-      const btnBackHome = document.getElementById("btn-back-home");
-      const btnBeginMission = document.getElementById("btn-begin-mission");
-      const btnExportExcel = document.getElementById("btn-export-excel");
-      const btnClearRecords = document.getElementById("btn-clear-records");
-
-      // Inicializar datos guardados
-      syncStudentInputs(getCurrentStudent());
-      renderAllTables();
-
-      nameInput.addEventListener("input", () => {
-        feedbackEl.textContent = "";
-        setCurrentStudent(nameInput.value);
-      });
-
-      nameInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") btnStartAdventure.click();
-      });
-
-      instrNameInput.addEventListener("input", () => {
-        setCurrentStudent(instrNameInput.value);
-      });
-
-      btnStartAdventure.addEventListener("click", () => {
-        const val = nameInput.value.trim();
-        if (!val) {
-          feedbackEl.textContent = "⚠️ Por favor, escribe tu nombre y apellido antes de comenzar la aventura.";
-          nameInput.focus();
-          SoundFX.error();
-          return;
-        }
-        setCurrentStudent(val);
-        switchView("taller");
-        showPhase("video", 0);
-      });
-
-      btnGoInstructions.addEventListener("click", () => {
-        switchView("instrucciones");
-      });
-
-      btnBackHome.addEventListener("click", () => {
-        switchView("inicio");
-      });
-
-      btnBeginMission.addEventListener("click", () => {
-        const val = instrNameInput.value.trim();
-        if (!val) {
-          showToast("⚠️ Escribe tu nombre en la casilla inferior para registrar tu calificación.");
-          instrNameInput.focus();
-          SoundFX.error();
-          return;
-        }
-        setCurrentStudent(val);
-        switchView("taller");
-        showPhase("video", 0);
-      });
-
-      btnExportExcel.addEventListener("click", exportRecordsToExcel);
-
-      let clearArmed = false;
-      btnClearRecords.addEventListener("click", () => {
-        if (!clearArmed) {
-          clearArmed = true;
-          btnClearRecords.textContent = "¿Confirmar borrado?";
-          showToast("Haz clic nuevamente en el botón para confirmar el borrado del historial.");
-          setTimeout(() => {
-            clearArmed = false;
-            btnClearRecords.textContent = "Limpiar historial";
-          }, 4000);
-          return;
-        }
-        clearArmed = false;
-        btnClearRecords.textContent = "Limpiar historial";
-        localStorage.removeItem(STORAGE_KEYS.RECORDS);
-        renderAllTables();
-        showToast("Historial de calificaciones eliminado.");
-      });
-
-      // Saltos rápidos desde el mapa del recorrido
-      document.querySelectorAll(".map-node").forEach((node) => {
-        node.addEventListener("click", () => {
-          const targetPhase = node.getAttribute("data-jump-phase");
-          if (!getCurrentStudent()) {
-            setCurrentStudent("Explorador(a) Invitado");
-          }
-          switchView("taller");
-          if (targetPhase === "video") showPhase("video", 0);
-          else if (targetPhase === "interactive") {
-            showPhase("interactive", 1);
-            startInteractiveExplanation();
-          } else if (targetPhase === "workshop") {
-            startWorkshop();
-          } else if (targetPhase === "report") {
-            showPhase("report", 3);
-            renderAllTables();
-          }
-        });
-      });
-
-      /* ------------------------------------------------------------------------
-         LÓGICA DE LABORATORIO Y TALLER (4 FASES INTERNAS)
-         ------------------------------------------------------------------------ */
       const phases = {
         video: document.getElementById("phase-video"),
         interactive: document.getElementById("phase-interactive"),
@@ -2226,97 +2027,182 @@
         document.getElementById("step-badge-4")
       ];
 
-      function showPhase(phaseKey, activeIndex) {
-        Object.values(phases).forEach((el) => el && el.classList.add("hidden"));
-        if (phases[phaseKey]) phases[phaseKey].classList.remove("hidden");
+      function enterStage(stageName) {
+        currentStage = stageName;
+        if (timerInterval && stageName !== "workshop") {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
 
-        stepBadges.forEach((badge, i) => {
+        if (stageName === "inicio") {
+          viewInicio.classList.remove("hidden");
+          viewExpedition.classList.add("hidden");
+          btnResetTop.classList.add("hidden");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+
+        viewInicio.classList.add("hidden");
+        viewExpedition.classList.remove("hidden");
+        btnResetTop.classList.remove("hidden");
+
+        Object.values(phases).forEach((el) => el && el.classList.add("hidden"));
+        if (phases[stageName]) phases[stageName].classList.remove("hidden");
+
+        const activeMap = { video: 0, interactive: 1, workshop: 2, report: 3 };
+        const activeIdx = activeMap[stageName] ?? 0;
+
+        stepBadges.forEach((badge, idx) => {
           if (!badge) return;
           badge.classList.remove("active", "completed");
-          if (i < activeIndex) badge.classList.add("completed");
-          if (i === activeIndex) badge.classList.add("active");
+          if (idx < activeIdx) badge.classList.add("completed");
+          if (idx === activeIdx) badge.classList.add("active");
         });
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      // Permitir navegar entre pasos desde el stepper superior para explorar la interfaz
-      stepBadges.forEach((badge) => {
-        badge.addEventListener("click", () => {
-          const target = badge.getAttribute("data-step-target");
-          if (target === "video") showPhase("video", 0);
-          if (target === "interactive") {
-            showPhase("interactive", 1);
-            startInteractiveExplanation();
+      /* ------------------------------------------------------------------------
+         PANTALLA INICIAL Y MODAL DE INSTRUCCIONES
+         ------------------------------------------------------------------------ */
+      const studentNameInput = document.getElementById("student-name");
+      const nameFeedback = document.getElementById("name-feedback");
+      const btnStartAdventure = document.getElementById("btn-start-adventure");
+      const instructionsModal = document.getElementById("instructions-modal");
+      const btnOpenInstrTop = document.getElementById("btn-open-instructions-top");
+      const btnOpenInstrHero = document.getElementById("btn-open-instructions-hero");
+      const btnCloseInstr = document.getElementById("btn-close-instructions");
+      const btnModalSecClose = document.getElementById("btn-modal-secondary-close");
+      const btnBeginMissionModal = document.getElementById("btn-begin-mission-modal");
+
+      const savedStudent = getCurrentStudent();
+      if (savedStudent) {
+        studentNameInput.value = savedStudent;
+        updateStudentHud(savedStudent);
+      }
+
+      studentNameInput.addEventListener("input", () => {
+        nameFeedback.textContent = "";
+        setCurrentStudent(studentNameInput.value);
+      });
+
+      studentNameInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          btnStartAdventure.click();
+        }
+      });
+
+      function openInstructionsModal() {
+        instructionsModal.classList.remove("hidden");
+      }
+
+      function closeInstructionsModal() {
+        instructionsModal.classList.add("hidden");
+      }
+
+      btnOpenInstrTop.addEventListener("click", openInstructionsModal);
+      btnOpenInstrHero.addEventListener("click", openInstructionsModal);
+      btnCloseInstr.addEventListener("click", closeInstructionsModal);
+      btnModalSecClose.addEventListener("click", closeInstructionsModal);
+
+      instructionsModal.addEventListener("click", (e) => {
+        if (e.target === instructionsModal) {
+          closeInstructionsModal();
+        }
+      });
+
+      function validateAndStartAdventure() {
+        const val = studentNameInput.value.trim();
+        if (!val) {
+          nameFeedback.textContent = "⚠️ Escribe tu nombre y apellido para comenzar la aventura.";
+          studentNameInput.focus();
+          SoundFX.error();
+          return false;
+        }
+        setCurrentStudent(val);
+        videoCompleted = false;
+        enterStage("video");
+        return true;
+      }
+
+      btnStartAdventure.addEventListener("click", () => {
+        validateAndStartAdventure();
+      });
+
+      btnBeginMissionModal.addEventListener("click", () => {
+        closeInstructionsModal();
+        if (currentStage === "inicio") {
+          if (!validateAndStartAdventure()) {
+            studentNameInput.focus();
           }
-          if (target === "workshop") startWorkshop();
-          if (target === "report") {
-            showPhase("report", 3);
-            renderAllTables();
-          }
-        });
+        }
       });
 
-      document.getElementById("btn-to-interactive").addEventListener("click", () => {
-        showPhase("interactive", 1);
-        startInteractiveExplanation();
+      /* ------------------------------------------------------------------------
+         ESTACIÓN 1: COMPLETAR VIDEO DE LA CLASE
+         ------------------------------------------------------------------------ */
+      document.getElementById("btn-complete-video").addEventListener("click", () => {
+        if (currentStage !== "video") return;
+        videoCompleted = true;
+        SoundFX.success();
+        enterStage("interactive");
+        startInteractivePhase();
       });
 
-      document.getElementById("btn-back-video").addEventListener("click", () => {
-        showPhase("video", 0);
-      });
-
-      /* ----- FASE 2: EXPLICACIÓN INTERACTIVA DEL PROCESO ----- */
+      /* ------------------------------------------------------------------------
+         ESTACIÓN 2: EXPLICACIÓN INTERACTIVA (BLOQUEO HASTA ACERTAR)
+         ------------------------------------------------------------------------ */
       const interactiveQuestions = [
         {
           left: [3, 8],
           right: [5, 13],
-          question: "Paso 1: Según el video, ¿qué operación realizamos para comparar estas dos fracciones al instante?",
+          question: "Paso 1: Según la clase, ¿qué operación se hace para comparar fracciones al instante?",
           options: [
-            "Sumar los numeradores entre sí y los denominadores entre sí.",
+            "Sumar numeradores con numeradores y denominadores con denominadores.",
             "Multiplicar en diagonal (productos cruzados) de abajo hacia arriba.",
-            "Restar el número menor al mayor en cada fracción."
+            "Restar el numerador menor al denominador mayor."
           ],
           correctIndex: 1,
-          explanation: "¡Correcto! Multiplicamos en diagonal: 13 × 3 para el lado izquierdo y 8 × 5 para el lado derecho."
+          explanation: "¡Correcto! Se multiplica en cruz de abajo hacia arriba: 13 × 3 a la izquierda y 8 × 5 a la derecha."
         },
         {
           left: [3, 8],
           right: [5, 13],
-          question: "Paso 2: Al multiplicar en diagonal (13 × 3 = 39 a la izquierda y 8 × 5 = 40 a la derecha), ¿qué concluimos?",
+          question: "Paso 2: Si 13 × 3 = 39 (izquierda) y 8 × 5 = 40 (derecha), ¿qué símbolo corresponde entre 3/8 y 5/13?",
           options: [
-            "Como 39 es menor que 40, entonces 3/8 < 5/13.",
-            "Como 39 es menor que 40, entonces 3/8 > 5/13.",
-            "Como ambos números son cercanos, las fracciones son equivalentes (=)."
+            "Menor que (<), porque 39 es menor que 40.",
+            "Mayor que (>), porque 39 es menor que 40.",
+            "Equivalente (=), porque ambos resultados son cercanos."
           ],
           correctIndex: 0,
-          explanation: "¡Excelente! El resultado de cada diagonal representa a la fracción de arriba: 39 < 40, así que 3/8 < 5/13."
+          explanation: "¡Muy bien! Como 39 < 40, la fracción izquierda es menor: 3/8 < 5/13."
         },
         {
           left: [4, 5],
           right: [7, 9],
-          question: "Paso 3: Practiquemos el proceso con 4/5 y 7/9. ¿Qué números obtenemos al multiplicar en cruz?",
+          question: "Paso 3: Al comparar 4/5 y 7/9 en diagonal, ¿cuáles son los productos cruzados?",
           options: [
-            "Izquierda: 20 (5×4) y Derecha: 63 (9×7)",
+            "Izquierda: 20 y Derecha: 63",
             "Izquierda: 36 (9×4) y Derecha: 35 (5×7)",
-            "Izquierda: 28 (4×7) y Derecha: 45 (5×9)"
+            "Izquierda: 28 y Derecha: 45"
           ],
           correctIndex: 1,
-          explanation: "¡Muy bien! 9 × 4 = 36 (izquierda) y 5 × 7 = 35 (derecha). Como 36 > 35, entonces 4/5 > 7/9."
+          explanation: "¡Excelente! 9 × 4 = 36 a la izquierda y 5 × 7 = 35 a la derecha; por tanto 4/5 > 7/9."
         },
         {
           left: [5, 20],
           right: [1, 4],
-          question: "Paso 4: Si al multiplicar en diagonal obtenemos 20 a la izquierda (4 × 5) y 20 a la derecha (20 × 1), ¿qué significa?",
+          question: "Paso 4: Si ambos productos cruzados dan 20 (4 × 5 = 20 y 20 × 1 = 20), ¿qué significa?",
           options: [
-            "Que hay un error y no se pueden comparar.",
-            "Que 5/20 es mayor porque tiene números más grandes.",
-            "Que ambas fracciones son equivalentes (=) porque representan la misma parte de la unidad."
+            "Que el ejercicio no tiene solución.",
+            "Que 5/20 siempre es mayor que 1/4.",
+            "Que ambas fracciones son equivalentes (=)."
           ],
           correctIndex: 2,
-          explanation: "¡Dominado! Cuando los productos cruzados son iguales (20 = 20), las fracciones son equivalentes (=). ¡Estás listo para el taller!"
+          explanation: "¡Dominado! Cuando los productos cruzados son iguales, las fracciones son equivalentes (=)."
         }
       ];
 
-      let iqIndex = 0;
       const iqCounter = document.getElementById("iq-counter");
       const iqVisual = document.getElementById("iq-visual");
       const iqQuestionText = document.getElementById("iq-question-text");
@@ -2325,14 +2211,17 @@
       const btnNextIq = document.getElementById("btn-next-iq");
       const btnStartWorkshop = document.getElementById("btn-start-workshop");
 
-      function startInteractiveExplanation() {
-        iqIndex = 0;
-        renderInteractiveQuestion();
+      function startInteractivePhase() {
+        if (!videoCompleted) return;
+        interactiveStepIndex = 0;
+        renderInteractiveStep();
       }
 
-      function renderInteractiveQuestion() {
-        const item = interactiveQuestions[iqIndex];
-        iqCounter.textContent = `Pregunta de procedimiento ${iqIndex + 1} de ${interactiveQuestions.length}`;
+      function renderInteractiveStep() {
+        currentInteractiveAnsweredCorrectly = false;
+        const item = interactiveQuestions[interactiveStepIndex];
+
+        iqCounter.textContent = `Pregunta de procedimiento ${interactiveStepIndex + 1} de ${interactiveQuestions.length}`;
         iqVisual.innerHTML = `
           <div class="mini-frac">
             <span>${item.left[0]}</span>
@@ -2348,32 +2237,43 @@
         `;
         iqQuestionText.textContent = item.question;
         iqFeedback.classList.add("hidden");
+
+        // Bloquear botones de avance hasta responder correctamente la pregunta actual
         btnNextIq.classList.add("hidden");
+        btnNextIq.disabled = true;
         btnStartWorkshop.classList.add("hidden");
+        btnStartWorkshop.disabled = true;
 
         iqOptionsContainer.innerHTML = "";
         item.options.forEach((optText, idx) => {
           const btn = document.createElement("button");
           btn.className = "iq-option-btn";
           btn.textContent = optText;
-          btn.addEventListener("click", () => handleInteractiveAnswer(btn, idx, item));
+          btn.addEventListener("click", () => handleInteractiveOption(btn, idx, item));
           iqOptionsContainer.appendChild(btn);
         });
       }
 
-      function handleInteractiveAnswer(clickedBtn, selectedIdx, item) {
+      function handleInteractiveOption(clickedBtn, selectedIdx, item) {
+        if (currentStage !== "interactive" || currentInteractiveAnsweredCorrectly) return;
+
         const allBtns = iqOptionsContainer.querySelectorAll(".iq-option-btn");
         if (selectedIdx === item.correctIndex) {
+          currentInteractiveAnsweredCorrectly = true;
           SoundFX.success();
           allBtns.forEach((b) => (b.disabled = true));
           clickedBtn.classList.add("correct");
+
           iqFeedback.className = "iq-feedback ok";
           iqFeedback.textContent = item.explanation;
           iqFeedback.classList.remove("hidden");
 
-          if (iqIndex < interactiveQuestions.length - 1) {
+          // Habilitar únicamente el botón correspondiente al paso actual
+          if (interactiveStepIndex < interactiveQuestions.length - 1) {
+            btnNextIq.disabled = false;
             btnNextIq.classList.remove("hidden");
           } else {
+            btnStartWorkshop.disabled = false;
             btnStartWorkshop.classList.remove("hidden");
           }
         } else {
@@ -2381,18 +2281,25 @@
           clickedBtn.classList.add("wrong");
           clickedBtn.disabled = true;
           iqFeedback.className = "iq-feedback err";
-          iqFeedback.textContent = "No exactamente. Recuerda el truco de multiplicar en diagonal de abajo hacia arriba e intenta con otra opción.";
+          iqFeedback.textContent = "Respuesta incorrecta. El avance sigue bloqueado: revisa la multiplicación en diagonal y pincha otra opción.";
           iqFeedback.classList.remove("hidden");
         }
       }
 
       btnNextIq.addEventListener("click", () => {
-        iqIndex++;
-        renderInteractiveQuestion();
+        if (!currentInteractiveAnsweredCorrectly || btnNextIq.disabled) {
+          showToast("Debes responder correctamente la pregunta actual para avanzar.");
+          return;
+        }
+        if (interactiveStepIndex < interactiveQuestions.length - 1) {
+          interactiveStepIndex++;
+          renderInteractiveStep();
+        }
       });
 
-      /* ----- FASE 3: TALLER INTERACTIVO CRONOMETRADO (10 EJERCICIOS) ----- */
-      const TOTAL_EXERCISES = 10;
+      /* ------------------------------------------------------------------------
+         ESTACIÓN 3: TALLER CRONOMETRADO DE 10 EJERCICIOS
+         ------------------------------------------------------------------------ */
       let exercises = [];
       let currentExIdx = 0;
       let score = 0;
@@ -2400,7 +2307,7 @@
       let startTime = 0;
       let elapsedMs = 0;
       let timerInterval = null;
-      let isLocked = false;
+      let isAnsweringLocked = false;
       let exerciseResults = [];
 
       const hudLives = document.getElementById("hud-lives");
@@ -2420,22 +2327,22 @@
       const workshopFeedback = document.getElementById("workshop-feedback");
       const symbolButtons = document.querySelectorAll(".symbol-btn");
 
-      function generateExercises() {
+      function generateTenExercises() {
         const pool = [
-          { l: [2, 3], r: [3, 5] },
-          { l: [3, 7], r: [4, 9] },
-          { l: [2, 6], r: [1, 3] },
-          { l: [5, 8], r: [7, 11] },
-          { l: [7, 10], r: [2, 3] },
-          { l: [3, 4], r: [9, 12] },
-          { l: [4, 9], r: [3, 7] },
-          { l: [5, 12], r: [3, 8] },
-          { l: [2, 5], r: [6, 15] },
-          { l: [8, 11], r: [3, 4] },
-          { l: [5, 6], r: [7, 9] },
-          { l: [3, 10], r: [2, 7] },
-          { l: [4, 7], r: [5, 8] },
-          { l: [6, 14], r: [3, 7] }
+          { l: [2, 3], r: [3, 5] },   // 10 > 9
+          { l: [3, 7], r: [4, 9] },   // 27 < 28
+          { l: [2, 6], r: [1, 3] },   // 6 = 6
+          { l: [5, 8], r: [7, 11] },  // 55 < 56
+          { l: [7, 10], r: [2, 3] },  // 21 > 20
+          { l: [3, 4], r: [9, 12] },  // 36 = 36
+          { l: [4, 9], r: [3, 7] },   // 28 > 27
+          { l: [5, 12], r: [3, 8] },  // 40 > 36
+          { l: [2, 5], r: [6, 15] },  // 30 = 30
+          { l: [8, 11], r: [3, 4] },  // 32 < 33
+          { l: [5, 6], r: [7, 9] },   // 45 > 42
+          { l: [3, 10], r: [2, 7] },  // 21 > 20
+          { l: [4, 7], r: [5, 8] },   // 32 < 35
+          { l: [6, 14], r: [3, 7] }   // 42 = 42
         ];
 
         for (let i = pool.length - 1; i > 0; i--) {
@@ -2459,17 +2366,24 @@
         });
       }
 
-      function startWorkshop() {
-        showPhase("workshop", 2);
-        exercises = generateExercises();
+      function startWorkshopStage() {
+        if (!videoCompleted || !currentInteractiveAnsweredCorrectly) {
+          showToast("Completa primero el video y las preguntas interactivas.");
+          return;
+        }
+
+        enterStage("workshop");
+        exercises = generateTenExercises();
         currentExIdx = 0;
         score = 0;
         lives = 3;
+        elapsedMs = 0;
         exerciseResults = [];
-        isLocked = false;
+        isAnsweringLocked = false;
+        hudTimer.textContent = "00:00.0";
 
-        updateHud();
-        renderCurrentExercise();
+        updateWorkshopHud();
+        renderWorkshopExercise();
 
         startTime = performance.now();
         if (timerInterval) clearInterval(timerInterval);
@@ -2479,16 +2393,23 @@
         }, 100);
       }
 
-      function updateHud() {
+      btnStartWorkshop.addEventListener("click", () => {
+        if (btnStartWorkshop.disabled) return;
+        startWorkshopStage();
+      });
+
+      function updateWorkshopHud() {
         hudLives.textContent = lives > 0 ? "❤️".repeat(lives) : "💔";
         hudScore.textContent = score;
-        const pct = Math.round((currentExIdx / TOTAL_EXERCISES) * 100);
-        progressLabel.textContent = `Compuerta ${Math.min(currentExIdx + 1, TOTAL_EXERCISES)} de ${TOTAL_EXERCISES}`;
+        const completedCount = exerciseResults.length;
+        const pct = Math.round((completedCount / TOTAL_EXERCISES) * 100);
+        const displayNum = Math.min(currentExIdx + 1, TOTAL_EXERCISES);
+        progressLabel.textContent = `Ejercicio ${displayNum} de ${TOTAL_EXERCISES}`;
         progressPercent.textContent = `${pct}%`;
         progressFill.style.width = `${pct}%`;
       }
 
-      function renderCurrentExercise() {
+      function renderWorkshopExercise() {
         const ex = exercises[currentExIdx];
         leftNumEl.textContent = ex.left[0];
         leftDenEl.textContent = ex.left[1];
@@ -2503,12 +2424,14 @@
         workshopFeedback.textContent = "";
         arenaBoard.classList.remove("flash-success", "flash-error");
         symbolButtons.forEach((btn) => (btn.disabled = false));
-        isLocked = false;
+        isAnsweringLocked = false;
       }
 
-      function handleSymbolChoice(chosenSymbol) {
-        if (isLocked) return;
-        isLocked = true;
+      function submitExerciseAnswer(chosenSymbol) {
+        if (currentStage !== "workshop" || isAnsweringLocked || currentExIdx >= TOTAL_EXERCISES) {
+          return;
+        }
+        isAnsweringLocked = true;
         symbolButtons.forEach((btn) => (btn.disabled = true));
 
         const ex = exercises[currentExIdx];
@@ -2527,7 +2450,7 @@
           symbolSlot.style.borderColor = "#10b981";
           symbolSlot.style.color = "#10b981";
           workshopFeedback.style.color = "#6ee7b7";
-          workshopFeedback.textContent = `✅ ¡Correcto! (${ex.leftCross} ${ex.answer} ${ex.rightCross}) +1 punto`;
+          workshopFeedback.textContent = `✅ ¡Correcto! (${ex.leftCross} ${ex.answer} ${ex.rightCross}) • +1 punto`;
         } else {
           lives -= 1;
           SoundFX.error();
@@ -2535,7 +2458,7 @@
           symbolSlot.style.borderColor = "#ef4444";
           symbolSlot.style.color = "#ef4444";
           workshopFeedback.style.color = "#fca5a5";
-          workshopFeedback.textContent = `❌ Era "${ex.answer}" porque ${ex.leftCross} ${ex.answer} ${ex.rightCross}. Pierdes 1 vida.`;
+          workshopFeedback.textContent = `❌ Era "${ex.answer}" (${ex.leftCross} vs ${ex.rightCross}). Pierdes 1 vida.`;
         }
 
         exerciseResults.push({
@@ -2545,45 +2468,48 @@
         });
 
         currentExIdx++;
-        updateHud();
+        updateWorkshopHud();
 
+        // Avance automático únicamente tras responder el ejercicio actual
         setTimeout(() => {
           if (lives <= 0 || currentExIdx >= TOTAL_EXERCISES) {
-            finishWorkshop();
+            finishWorkshopStage();
           } else {
-            renderCurrentExercise();
+            renderWorkshopExercise();
           }
-        }, 900);
+        }, 850);
       }
 
       symbolButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
-          handleSymbolChoice(btn.getAttribute("data-symbol"));
+          submitExerciseAnswer(btn.getAttribute("data-symbol"));
         });
       });
 
       document.addEventListener("keydown", (e) => {
-        if (views.taller.classList.contains("hidden") || phases.workshop.classList.contains("hidden") || isLocked) return;
-        if (e.key === "ArrowLeft") handleSymbolChoice("<");
-        if (e.key === "ArrowDown") handleSymbolChoice("=");
-        if (e.key === "ArrowRight") handleSymbolChoice(">");
+        if (currentStage !== "workshop" || isAnsweringLocked) return;
+        if (e.key === "ArrowLeft") submitExerciseAnswer("<");
+        if (e.key === "ArrowDown") submitExerciseAnswer("=");
+        if (e.key === "ArrowRight") submitExerciseAnswer(">");
       });
 
-      btnStartWorkshop.addEventListener("click", startWorkshop);
-
-      /* ----- FASE 4: FINALIZACIÓN Y REPORTE VINCULADO AL EXCEL ----- */
-      function finishWorkshop() {
-        if (timerInterval) clearInterval(timerInterval);
-        elapsedMs = performance.now() - startTime;
+      /* ------------------------------------------------------------------------
+         ESTACIÓN 4: REPORTE FINAL, MAPA COMPLETADO Y BITÁCORA EXCEL
+         ------------------------------------------------------------------------ */
+      function finishWorkshopStage() {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+        elapsedMs = Math.max(100, performance.now() - startTime);
         const formattedTime = formatTimeMs(elapsedMs);
         hudTimer.textContent = formattedTime;
-        progressFill.style.width = "100%";
-        progressPercent.textContent = "100%";
+        progressFill.style.width = `${Math.round((exerciseResults.length / TOTAL_EXERCISES) * 100)}%`;
 
         SoundFX.victory();
-        showPhase("report", 3);
+        enterStage("report");
 
-        const studentName = getCurrentStudent() || "Explorador(a) Invitado";
+        const studentName = getCurrentStudent() || "Explorador(a)";
         const nowStr = new Date().toLocaleString("es-EC", {
           year: "numeric",
           month: "2-digit",
@@ -2606,16 +2532,16 @@
 
         if (lives <= 0) {
           trophyEl.textContent = "🧭";
-          titleEl.textContent = "¡Misión Interrumpida por Energía!";
-          subEl.textContent = "Te quedaste sin corazones, pero tus puntos ganados se han guardado en el reporte.";
-        } else if (score === 10) {
+          titleEl.textContent = "¡Sin Vidas Restantes!";
+          subEl.textContent = "Se registraron tus puntos logrados hasta este ejercicio.";
+        } else if (score === TOTAL_EXERCISES) {
           trophyEl.textContent = "🏆";
-          titleEl.textContent = "¡Expedición Perfecta (10/10)!";
-          subEl.textContent = "Dominas la comparación de fracciones con precisión y velocidad.";
+          titleEl.textContent = "¡Puntaje Perfecto (10 / 10)!";
+          subEl.textContent = "Completaste los 10 ejercicios y tu tiempo quedó registrado.";
         } else {
           trophyEl.textContent = "🎖️";
-          titleEl.textContent = "¡Expedición Completada!";
-          subEl.textContent = "Tu calificación y tiempo ya forman parte del registro oficial.";
+          titleEl.textContent = "¡Taller Completado!";
+          subEl.textContent = "Revisa tu calificación, tiempo y el mapa del recorrido completado.";
         }
 
         document.getElementById("res-name").textContent = studentName;
@@ -2630,14 +2556,53 @@
           </div>
         `).join("");
 
-        renderAllTables();
+        renderReportTable();
       }
 
       document.getElementById("btn-report-excel").addEventListener("click", exportRecordsToExcel);
-      document.getElementById("btn-retry-workshop").addEventListener("click", startWorkshop);
-      document.getElementById("btn-report-home").addEventListener("click", () => {
-        switchView("inicio");
+
+      let clearArmed = false;
+      const btnClearRecords = document.getElementById("btn-clear-records");
+      btnClearRecords.addEventListener("click", () => {
+        if (!clearArmed) {
+          clearArmed = true;
+          btnClearRecords.textContent = "¿Confirmar borrado?";
+          showToast("Pulsa nuevamente para borrar el historial.");
+          setTimeout(() => {
+            clearArmed = false;
+            btnClearRecords.textContent = "Limpiar historial";
+          }, 3500);
+          return;
+        }
+        clearArmed = false;
+        btnClearRecords.textContent = "Limpiar historial";
+        localStorage.removeItem(STORAGE_KEYS.RECORDS);
+        renderReportTable();
+        showToast("Historial eliminado.");
       });
+
+      document.getElementById("btn-retry-workshop").addEventListener("click", () => {
+        if (currentStage !== "report") return;
+        startWorkshopStage();
+      });
+
+      document.getElementById("btn-new-student").addEventListener("click", () => {
+        videoCompleted = false;
+        currentInteractiveAnsweredCorrectly = false;
+        studentNameInput.value = "";
+        setCurrentStudent("");
+        enterStage("inicio");
+        studentNameInput.focus();
+      });
+
+      btnResetTop.addEventListener("click", () => {
+        videoCompleted = false;
+        currentInteractiveAnsweredCorrectly = false;
+        enterStage("inicio");
+      });
+
+      // Iniciar siempre en la pantalla inicial limpia
+      enterStage("inicio");
     })();
   </script>
 </body>
